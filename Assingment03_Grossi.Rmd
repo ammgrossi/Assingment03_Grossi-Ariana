@@ -7,24 +7,94 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(message = FALSE)
+``` 
+
+```{r load-packages, message = TRUE}
+library(tidyverse) 
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+mydata <- read.csv ("C:/Users/gross/Desktop/GU/0. Spring 2020/3. Data science/Class 5/Assingment03_Grossi/Data/Arg_wbg.csv", header = TRUE)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+View(mydata)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+##I've chosen to work with a Data base of Argentina from the World Bank with a panel data for the period 2000-2015 on some main variables of interest. Specifically, I want to observe how the growth of the GDP impacts on life expectancy and other health indicators.
+
+```{r}
+mydata %>%
+  select(GDP, Life_exp, Ado_fertility_rate, Mort_rate_under_5, Immunization_measles)
+```
+
+
+#1. In this first graph we can observe that life expectancy at birth (measured in years) increases over the period when the Gross Domestic Product (measured in current US$) increases as well. In this way, we can observe that in the year 2000 the life expectancy was almost 74 years while, by 2015 it has increased to over 76 years. We have to point out that the two outlier picks observed in the graph match with two deep economic crisis in Argentina (in 2001 and 2014 respectively). 
+
+
+```{r}
+pdf("graph1_Grossi, Ariana")
+ggplot(data = mydata, mapping = aes(x = GDP, y = Life_exp))+ 
+  geom_line(color = "violet", size = 2)+
+  labs(title = "Life expectancy at birth increases with GDP", subtitle = "Data for Argentina, period: 2000-2015", caption = "Data source:https://databank.worldbank.org/source/world-development-indicators#", y = "Life expectancy at birth, total (years)", x = "GDP (current US$)")+
+  theme(plot.title = element_text(face = "bold", size = 15), plot.subtitle
+        = element_text(colour = "steelblue", face = "bold.italic"), plot.caption = element_text(colour = "steelblue", face = "bold.italic"),
+          axis.title = element_text(size = 10, colour = "steelblue4"),
+                  axis.text = element_text(colour = "steelblue4", size =
+                                             10))
+dev.off()
+```
+
+#2. In this second graph we can observe that Adolescent fertility rate (measured in births per 1,000 women ages 15-19) generally decreases over the period when the Gross Domestic Product (measured in current US$) increases. In this way, we can observe that in the year 2000 the adolescent fertility rate was over 64 births per 1,000 women, while by the year 2015 it has decreased to almost 63 births per 1,000 women, implying a decrease of 1 birth over the period.
+
+
+```{r}
+pdf("graph2_Grossi, Ariana")
+ggplot(data = mydata, mapping = aes(x = GDP, y = Ado_fertility_rate))+ 
+  geom_point(color = "magenta4", alpha = 0.5, size = 3)+
+  labs(title = "Adolescent fertility rate decreases with GDP", subtitle = "Data for Argentina, period: 2000-2015", caption = "Data source:https://databank.worldbank.org/source/world-development-indicators#", y = "Adolescent fertility rate \n(births per 1,000 women ages 15-19)", x = "GDP \n(current US$)")+
+  theme(plot.title = element_text(face = "bold", size = 14), plot.subtitle
+        = element_text(colour = "magenta4", face = "bold.italic"), plot.caption = element_text( face = "bold.italic", colour = "magenta4"),
+          axis.title = element_text(face = "bold", size = 12),
+                  axis.text = element_text(face = "bold", size =
+                                             12))
+dev.off()
+```
+
+
+#3. In this third graph we can observe that Mortality rate under-5 (measured in deaths per 1,000 live births) generally decreases over the period when the Gross Domestic Product (measured in current US$) increases. In this way, we can observe that in the year 2000 the mortality rate was near the 20 deaths per 1,000 live births, while by the year 2015 it has decreased to almost 12.5 births per 1,000 live births, implying a decrease of almost 7.5 deaths per 1,000 live over the period.
+
+
+```{r}
+pdf("graph3_Grossi, Ariana")
+ggplot(data = mydata, mapping = aes(x = GDP, y = Mort_rate_under_5))+ 
+  geom_col(colour = "cornflowerblue")+
+  labs(title = "Mortality rate under-5 decreases with GDP", subtitle = "Data for Argentina, period: 2000-2015", caption = "Data source:https://databank.worldbank.org/source/world-development-indicators#", y = "Mortality rate under-5 \n(per 1,000 live births)", x = "GDP \n(current US$)")+
+  theme(plot.title = element_text(face = "bold", size = 15, hjust = 0.5), plot.subtitle
+        = element_text(colour = "cornflowerblue", face = "bold.italic", hjust = 0.5), plot.caption = element_text( face = "bold.italic", colour = "cornflowerblue"),
+          axis.title = element_text(face = "bold", size = 10),
+                  axis.text = element_text(face = "bold", size =
+                                             10),
+panel.background = element_rect(fill = "lightblue",
+                                colour = "lightblue",
+                                size = 0.5, linetype = "solid"),
+  panel.grid.major = element_line(size = 0.5, linetype = 'solid',
+                                colour = "white"), 
+  panel.grid.minor = element_line(size = 0.25, linetype = 'solid',
+                                colour = "white"))
+dev.off()
+```
+
+#4. In this fourth graph we can observe that the Immunization for measles (measured as a % of children ages 12-23 months) generally decreases over the period when the Gross Domestic Product (measured in current US$) increases. We can not be sure about the positive impact of this effect, since we have two possible interpretations: it could be that measles has diminished and so immunization is not more necessary or, it could be that the budget for inmunization has diminished. Thus, we cannot make a precise conclusion of the effect of GDP growth over this variable.
+
+
+```{r}
+pdf("graph4_Grossi, Ariana")
+ggplot(data = mydata, mapping = aes(x = GDP, y = Immunization_measles))+ 
+geom_jitter()+
+labs(title = "Immunization measles decreases with GDP", subtitle = "Data for Argentina, period: 2000-2015", caption = "Data source:https://databank.worldbank.org/source/world-development-indicators#", y = "Immunization, measles \n(% of children ages 12-23 months)", x = "GDP \n(current US$)")+
+  theme_dark()
+dev.off()
+```
+
